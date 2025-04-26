@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Sun, Moon, X, Menu } from 'lucide-react';
-import logo from '../assets/logo.png'; // <-- make sure you have your logo here
-import './Sidebar.css'; // <-- we'll create this css for transitions
+import { Sun, Moon, X, Menu, FileText } from 'lucide-react'; // Added FileText icon
+import logo from '../assets/logo.png';
+import './Sidebar.css';
 
 export default function Sidebar({ isOpen, toggleSidebar, darkMode, setDarkMode }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -26,6 +26,31 @@ export default function Sidebar({ isOpen, toggleSidebar, darkMode, setDarkMode }
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
+  };
+
+  // New function to handle report generation
+  const handleGenerateReport = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/reports/generate');
+      const data = await response.json();
+
+      if (data && data.data) {
+        const blob = new Blob([data.data], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'enrollment_report.csv';
+        link.click();
+
+        URL.revokeObjectURL(url);
+      } else {
+        alert('No report data available.');
+      }
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Failed to generate report.');
+    }
   };
 
   return (
@@ -92,6 +117,16 @@ export default function Sidebar({ isOpen, toggleSidebar, darkMode, setDarkMode }
             <NavLink to="/enrollments" className={navLinkClass} onClick={toggleSidebar}>
               {collapsed ? '📝' : 'Enrollments'}
             </NavLink>
+          </li>
+
+          {/* Generate Report Button */}
+          <li className="nav-item mt-3">
+            <button
+              className="btn btn-outline-primary w-100"
+              onClick={handleGenerateReport}
+            >
+              {collapsed ? <FileText size={20} /> : 'Generate Report'}
+            </button>
           </li>
         </ul>
 
