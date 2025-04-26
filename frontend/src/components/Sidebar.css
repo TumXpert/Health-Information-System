@@ -1,0 +1,12 @@
+.custom-nav-link {
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    padding: 8px 12px;
+  }
+  
+  .custom-nav-link:hover {
+    background-color: #e9ecef; /* light gray on hover */
+    transform: scale(1.02);
+    text-decoration: none;
+  }
+  
